@@ -1,0 +1,27 @@
+{
+  "name": "graphql-server",
+  "version": "1.0.0",
+  "description": "demo",
+  "main": "server.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zingsono/node-snippet.git"
+  },
+  "keywords": [
+    "graphql"
+  ],
+  "author": "Zengs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zingsono/node-snippet/issues"
+  },
+  "homepage": "https://github.com/zingsono/node-snippet#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "express-graphql": "^0.7.1",
+    "graphql": "^14.0.2"
+  }
+}
