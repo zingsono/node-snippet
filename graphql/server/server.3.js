@@ -1,6 +1,6 @@
 var express = require('express');
 var graphqlHTTP = require('express-graphql');
-var {GraphQLSchema,GraphQLObjectType,GraphQLString,GraphQLInt } = require('graphql');
+var { buildSchema,GraphQLSchema,GraphQLObjectType,GraphQLString,GraphQLInt } = require('graphql');
 
 let ShopType = new GraphQLObjectType({
     name: 'Shop',

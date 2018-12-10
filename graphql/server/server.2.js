@@ -9,6 +9,7 @@ var schema = buildSchema(`
     EMPIRE
     JEDI
   }
+  # 会员信息
   type Member {
     age: Int
   }
