@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>交易编辑</title>
+    <!-- Create a simple CodeMirror instance -->
+    <link rel="stylesheet" href="../assets/codemirror-5.42.2/lib/codemirror.css">
+    <link rel="stylesheet" href="../assets/codemirror-5.42.2/theme/idea.css">
+</head>
+<body>
+<div>
+    <p>交易码：<input></p>
+    <p>模块代码：<textarea id="codeTextarea">
+        module.exports = function (req, res) {
+                    return { }
+                }
+
+    </textarea></p>
+</div>
+
+<script src="../assets/codemirror-5.42.2/lib/codemirror.js"></script>
+<script src="../assets/codemirror-5.42.2/mode/javascript/javascript.js"></script>
+<script>
+    window.onload = function () {
+        var editor = CodeMirror.fromTextArea(document.getElementById("codeTextarea"), {
+            lineNumbers: true,
+            mode: "javascript",
+            theme: "default"
+        });
+    }
+
+</script>
+</body>
+</html>
