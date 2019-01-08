@@ -13,5 +13,5 @@ module.exports = function (ctx, req, res) {
 
     // 加密响应报文
 
-    return ctx.require('util/date', req, res)
+    return ctx.require('service/D10010', req, res).apply({a:'haha'})
 }
