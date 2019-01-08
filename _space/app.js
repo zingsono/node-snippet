@@ -28,8 +28,7 @@ let ctx = {
 }
 
 app.all('/:rt', function (req, res) {
-    let rs = ctx.require(req.params.rt, req, res)
-    res.send(rs)
+    ctx.require(req.params.rt, req, res).then(rs=>res.send(rs)).catch(err=>res.status(500).send(err))
 })
 
 let port = ctx.config().server.port

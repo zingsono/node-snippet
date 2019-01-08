@@ -13,6 +13,7 @@
   "author": "Zengs",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "oracledb": "^3.0.1"
   }
 }

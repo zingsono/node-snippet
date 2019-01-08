@@ -3,6 +3,8 @@
  */
 
 let os = require('os')
-module.exports = function () {
-    return os.hostname()
+module.exports = async function () {
+    return {
+        hostname: os.hostname()
+    }
 }
