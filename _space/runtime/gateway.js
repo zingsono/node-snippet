@@ -5,6 +5,7 @@
 
 
 module.exports = function (ctx, req, res) {
+
     // 解密请求报文
 
     // 校验登录会话
@@ -13,5 +14,8 @@ module.exports = function (ctx, req, res) {
 
     // 加密响应报文
 
-    return ctx.require('service/D10010', req, res).apply({a:'haha'})
+
+    let s = ctx.require('service/D10010', req, res)
+
+    return s.apply({a:'haha'})
 }

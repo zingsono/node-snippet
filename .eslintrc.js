@@ -1,3 +1,6 @@
+/**
+ * 官网配置Rules文档  https://eslint.org/docs/rules/
+ */
 module.exports = {
     root: true,
     extends: [

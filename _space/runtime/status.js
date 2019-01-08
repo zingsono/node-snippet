@@ -3,5 +3,5 @@
  * @returns {{status: string}}
  */
 module.exports = function () {
-    return{'status':'ok', 'date':require('./date')()}
+    return {'status':'ok', 'date':require('./date')()}
 }
