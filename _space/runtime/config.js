@@ -3,21 +3,28 @@
  */
 module.exports = function () {
     return {
-        application:{
-            name:'_space',
-            version:'v1.0.0',
+        application: {
+            name: '_space',
+            version: 'v1.0.0',
         },
-        server:{
+        server: {
             port: 30625
         },
-        baseUrl:'/',
-        expose:[''],
-        oracle:{
-            connectString: 'proxy.unionlive.com:1521/orcl',
-            user: 'unionlive',
-            password: 'unionlive'
-        },
-        redis:{},
-        mongo:{}
+        baseUrl: '/',
+        expose: [''],
+        //可配置多个数据库连接，使用连接池别名区分
+        oracle: [
+            {
+                poolAlias: 'default',
+                poolMin: 0,
+                poolMax: 4,
+                queueTimeout: 10000,
+                connectString: 'proxy.unionlive.com:1521/orcl',
+                user: 'unionlive',
+                password: 'unionlive'
+            }
+        ],
+        redis: {},
+        mongo: {}
     }
 }

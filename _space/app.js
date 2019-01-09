@@ -12,25 +12,35 @@ app.use(express.static('public'))
 
 // Body数据解析
 let bodyParser = require('body-parser')
-app.use(bodyParser.json())  // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.json()) // for parsing application/json
+app.use(bodyParser.urlencoded({
+    extended: true
+})) // for parsing application/x-www-form-urlencoded
+
 
 // 构建统一上下文对象
 let ctx = {
-    require(rt, req, res){
-        rt = './runtime/'+rt
-        delete require.cache[require.resolve(rt)]  // 文件更新时需要清除缓存或者重启服务
+    require(rt, req, res) {
+        rt = './runtime/' + rt
+        delete require.cache[require.resolve(rt)] // 文件更新时需要清除缓存或者重启服务
         return require(rt)(ctx, req, res)
     },
-    config(){
+    config() {
         return ctx.require('config')
     }
 }
 
-app.all('/:rt', function (req, res) {
-    ctx.require(req.params.rt, req, res).then(rs=>res.send(rs)).catch(err=>res.status(500).send(err))
+app.all('/space/:rt', function (req, res) {
+    ctx.require(req.params.rt, req, res)
+        .then(rs => {
+            res.send(rs)
+        }).catch(err => {
+            console.log(err)
+            res.send(err)
+        })
 })
 
-let port = ctx.config().server.port
-app.listen(port)
-console.log(`Server http://localhost:${port}/`)
+
+let server = app.listen(ctx.config().server.port, function () {
+    console.log(`Start Server http://localhost:${server.address().port}/`)
+})
