@@ -4,7 +4,7 @@
  */
 
 let oracledb = require('oracledb')
-// 自动提交，默认false 
+// 自动提交，默认false
 oracledb.autoCommit = false
 // 查询超时时间设置 10 seconds, 默认60 seconds
 oracledb.queueTimeout = 10000
@@ -12,11 +12,8 @@ console.log('** Oracle client library version is ' + oracledb.oracleClientVersio
 
 let pool = {}
 
-module.exports = function (ctx) {
+module.exports = function(ctx) { 
     let _orcl = {
-        connection: null,
-        autoCommit: false,
-
         /**
          * 通过连接池别名指定数据库连接，默认值：default
          */
@@ -42,22 +39,68 @@ module.exports = function (ctx) {
             if (!pool[this.poolAlias]) {
                 return Promise.reject(`Oracle poolAlias "${this.poolAlias} " not found in the connection pool cache`)
             }
+            if(this.connection){
+                return this.connection    
+            }
             return pool[this.poolAlias].getConnection()
+            
         },
         /**
-         * 执行SQL
-         * @param {String} sql 
-         * @param {Array} bindParams 
-         * @param {Object} options 
+         * 执行查询SQL
+         * @param {String} sql
+         * @param {Array} bindParams
+         * @param {Object} options
          */
         async exec(sql, bindParams = [], options = {}) {
             let conn = await this.open()
             let result = await conn.execute(sql, bindParams, options)
-            await conn.commit()
-            await conn.close()
+            //属性connection为空时实时提交
+            if(!this.connection){
+                await conn.commit()
+                await conn.close()
+            }
             console.log('exec result:')
             console.log(result)
             return result
+        },
+        /**
+         * 事务
+         * @param {Function} handle 事务操作函数  
+         */
+        async transaction(handle){
+            let conn = await this.open()
+            this.connection = conn
+            try {
+                await handle(this)
+                await conn.commit()
+                return Promise.resolve(1)
+            } catch (error) {
+                await conn.rollback()
+                return Promise.reject(error)
+            } finally {
+                await conn.close()
+                this.connection = null
+            }
+        },
+        /**
+         * 执行更新SQL
+         * @param {String} sql 
+         * @param {Array} bindParams 
+         * @param {Object} options 
+         */
+        async update(sql, bindParams = []) {
+            let result = await this.exec(sql, bindParams)
+            return result.rowsAffected
+        },
+        /**
+         * 数据库查询
+         * @param {String} sql
+         * @param {Array} bindParams
+         * @param {Object} options
+         */
+        async query(sql, bindParams = []) {
+            let result = await this.exec(sql, bindParams)
+            return this.resultSet(result)
         },
         /**
          * 插入单条数据，根据对象拼接insert脚本
@@ -68,83 +111,17 @@ module.exports = function (ctx) {
             let [cols, vals] = ['', '']
             let values = []
             for (const key in object) {
-                [cols, vals] = [cols.concat(',', key), vals.concat(',', `:${key}`)]
+                [cols, vals] = [
+                    cols.concat(',', key),
+                    vals.concat(',', `:${key}`)
+                ]
                 values.push(object[key])
             }
             [cols, vals] = [cols.substring(1), vals.substring(1)]
             let sql = `insert into ${tableName} (${cols}) values (${vals})`
             console.log(`insertOne sql=> ${sql}   args=> ${values}`)
-            let result = await this.exec(sql, values)
-            return result.rowsAffected
-        },
-        async query(sql, bindParams = [], options = {}) {
-            let result = await this.exec(sql, bindParams, options)
-            return this.resultSet(result)
-        },
-        //==========================================================================================
-
-        //获取连接
-        getConn() {
-            if (!this.connection) {
-                this.connection = oracledb.getConnection(conf)
-            }
-            return this.connection
-        },
-        //关闭连接
-        close() {
-            if (this.connection) {
-                this.connection.then(conn => {
-                    if (conn) {
-                        conn.close(function (err) {
-                            console.error(`Close oracle connection Exception：${err}`)
-                        })
-                    }
-                })
-            }
-        },
-        //事务中做更新操作
-        transaction(func) {
-            _orcl.autoCommit = true
-            return func(_orcl).then(() => {
-                return _orcl.commit()
-            }).catch(err => {
-                _orcl.rollback()
-                return Promise.reject(err)
-            })
-        },
-        //提交事务
-        commit() {
-            return this.getConn().then(conn => conn.commit())
-        },
-        //回滚事务
-        rollback() {
-            return this.getConn().then(conn => conn.rollback())
-        },
-        //执行sql
-        execute(sql, args = [], options = {}) {
-            return this.getConn().then(conn => {
-                return conn.execute(sql, args, options).then(result => {
-                    conn.close()
-                    return result
-                })
-            })
-        },
-        //执行更新操作，返回更新记录行数
-        update(sql, args = []) {
-            return this.execute(sql, args).then(result => {
-                return result.rowsAffected
-            })
-        },
-        //执行查询SQL, options参数文档：https://oracle.github.io/node-oracledb/doc/api.html#executeoptions
-        select(sql, args = [], options = {}) {
-            return this.getConn()
-                .then(conn => {
-                    return conn.execute(sql, args, options)
-                }).then(result => {
-                    let rs = _orcl.resultSet(result)
-                    _orcl.close()
-                    return rs
-                })
+            let rowsAffected = await this.update(sql, values)
+            return rowsAffected
         },
         //结果集数组处理为对象集合,字段名改为小写
         resultSet(result) {
@@ -160,32 +137,23 @@ module.exports = function (ctx) {
             }
             return rs
         },
-        //快捷方法：插入对象,根据obj拼接 insert sql
-        insertObject(tableName, obj = {}) {
-            let cols = ''
-            let vals = ''
-            let values = []
-            for (const key in obj) {
-                cols = cols.concat(',', key)
-                vals = vals.concat(',', `:${key}`)
-                values.push(obj[key])
-            }
-            cols = cols.substring(1)
-            vals = vals.substring(1)
-            let sql = `insert into ${tableName} (${cols}) values (${vals})`
-            console.log(`insert sql=> ${sql}   args=> ${values}`)
-            //return this.update(sql, values)
-            return Promise.resolve(1)
-        },
-        //快捷方法：查询全部数据
+        /**
+         * 查询全部数据
+         * @param {*} tableName 
+         */
         selectAll(tableName) {
-            return this.select(`select * from ${tableName}`)
+            return this.query(`select * from ${tableName}`)
         },
-        //快捷方法：分页查询 
+        /**
+         * 分页查询
+         * @param {*} sql 
+         * @param {*} args 
+         */
         selectPage(sql, args) {
             console.log(obj)
-            return this.update(sql, args)
+            return this.query(sql, args)
         }
     }
+    _orcl.connection = _orcl.open()
     return _orcl
 }
