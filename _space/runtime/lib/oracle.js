@@ -114,7 +114,7 @@ module.exports = function(ctx) {
          * @param {Array} bindParams
          * @param {Object} options
          */
-        query(sql, bindParams = [], options = {}) {
+        query(sql, bindParams = [], options = {extendedMetaData:false}) {
             return this.open().then(conn=>{
                 return Promise.all([conn.execute(sql, bindParams, options)]).then(rs => {
                     return rs[0]
@@ -152,8 +152,41 @@ module.exports = function(ctx) {
          * @param {*} bindParams 
          */
         select(sql, bindParams = []){
-            return this.query(sql, bindParams, {extendedMetaData:false}).then(rs=>{
+            return this.query(sql, bindParams).then(rs=>{
                 return _orcl.resultSet(rs)
+            })
+        },
+        /**
+         * 查询返回一行的结果
+         * @param {*} sql 
+         * @param {*} bindParams 
+         */
+        selectObject(sql, bindParams = []){
+            return this.query(sql, bindParams).then(rs=>{
+                let rows = rs.rows
+                if(!rows){
+                    throw 'Error: result is empty'
+                }
+                if(rows.length>1){
+                    throw 'Error: rows is greater than 1'
+                }
+                return rows[0]
+            })
+        },
+        /**
+         * 查询返回一个字段的结果
+         * @param {*} sql 
+         * @param {*} bindParams 
+         */
+        selectValue(sql, bindParams = []){
+            return this.selectObject(sql, bindParams).then(obj=>{
+                if(obj.length>1){
+                    throw 'Error: columns is greater than 1'
+                }
+                for (const k in obj) {
+                    return obj[k]
+                }
+                throw 'Error: result is empty'
             })
         },
         /**
@@ -164,13 +197,26 @@ module.exports = function(ctx) {
             return this.select(`select * from ${tableName}`)
         },
         /**
-         * 分页查询
-         * @param {*} sql 
-         * @param {*} args 
+         * 分页查询 
+         * @param {String} sql 
+         * @param {Array} bindParams 
+         * @param {Number} pageNum   页码从1开始，默认1
+         * @param {Number} pageSize 分页大小，默认10
          */
-        selectPage(sql, args) {
-            console.log(obj)
-            return this.select(sql, args)
+        selectPage(sql, bindParams = [], pageNum = 1, pageSize = 10, isCount = true) {
+            //分页条件索引为：1-10  11-20 21-30
+            let [beginIndex, endIndex] = [pageSize*(pageNum-1)+1, pageSize*pageNum]
+            let pageParams = []
+            pageParams = pageParams.concat(bindParams)
+            pageParams.push(endIndex, beginIndex)
+            return Promise.all([
+                isCount?this.selectValue(`select count(1) from (${sql})`, bindParams):Promise.resolve(0),
+                this.select(`select * from (select t.*,ROWNUM RN from (${sql}) t where ROWNUM <= :endIndex)  where RN >= :beginIndex`, pageParams)
+            ]).then(rs => {
+                return {total:rs[0], pageSize:pageSize, pageNum:pageNum, data:rs[1]}
+            }).catch(err => {
+                throw err
+            })
         }
     }
     return _orcl

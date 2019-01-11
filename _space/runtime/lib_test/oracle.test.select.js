@@ -23,7 +23,14 @@ let t = {
         }).catch(err=>{
             console.error(err)    
         })
+    },
+    selectPage(){
+        orcl.selectPage('ULTAB_SC_API_SCRIPT', [], 2, 2, false).then(rs=>{
+            console.log(rs)
+        }).catch(err=>{
+            console.error(err)    
+        })
     }
 }
 
-t.selectAll()
+t.selectPage()
