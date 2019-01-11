@@ -68,14 +68,14 @@ module.exports = function(ctx) {
                 throw err
             })
         },
-        insert(sql, bindParams = []){
-            return this.execute(conn=>{ return [conn.execute(sql, bindParams)] })
-        },
-        delete(sql, bindParams = []){
-            return this.execute(conn=>{ return [conn.execute(sql, bindParams)] })
-        },
         update(sql, bindParams = []){
             return this.execute(conn=>{ return [conn.execute(sql, bindParams)] })
+        },
+        insert(sql, bindParams = []){
+            return this.update(sql, bindParams)
+        },
+        delete(sql, bindParams = []){
+            return this.update(sql, bindParams)
         },
         /**
          * 插入单条数据，根据对象拼接insert脚本
