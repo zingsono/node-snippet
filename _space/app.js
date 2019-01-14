@@ -17,7 +17,6 @@ app.use(bodyParser.urlencoded({
     extended: true
 })) // for parsing application/x-www-form-urlencoded
 
-
 // 构建统一上下文对象
 let ctx = {
     require(rt, req, res) {
@@ -39,7 +38,6 @@ app.all('/space/:rt', function (req, res) {
             res.send(err)
         })
 })
-
 
 let server = app.listen(ctx.config().server.port, function () {
     console.log(`Start Server http://localhost:${server.address().port}/`)

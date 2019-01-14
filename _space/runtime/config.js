@@ -25,6 +25,12 @@ module.exports = function () {
             }
         ],
         redis: {},
-        mongo: {}
+        mongo: [
+            {  
+                url: 'mongodb://localhost:27017',
+                db: 'task',
+                default: true
+            }
+        ]
     }
 }

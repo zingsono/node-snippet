@@ -15,7 +15,7 @@ let pool = {}
 /**
  * 加载连接池
  */
-function poolInit(poolAttrs = []) {
+function poolInitialize(poolAttrs = []) {
     for (const conf of poolAttrs) {
         if (!pool[conf.poolAlias]) {
             pool[conf.poolAlias] = oracledb.createPool(conf)
@@ -29,12 +29,16 @@ module.exports = function(ctx) {
          * 通过连接池别名指定数据库连接，默认值：default
          */
         poolAlias: 'default',
+        db(name = 'default'){
+            this.poolAlias = name
+            return _orcl
+        },
         /**
          * 打开一个连接
          */
         async open() {
             if (!pool[this.poolAlias]) {
-                poolInit(ctx.config().oracle)
+                poolInitialize(ctx.config().oracle)
             }
             if (!pool[this.poolAlias]) {
                 throw `Oracle poolAlias "${this.poolAlias} " not found in the connection pool cache`
@@ -42,7 +46,6 @@ module.exports = function(ctx) {
             let connectionPool = await pool[this.poolAlias]
             return connectionPool.getConnection()
         },
-
         /**
          * 数据库更新操作，包括 [ insert,delete,update ] 
          * return结果为异步执行函数数组，事务操作使用多个异步函数即可
@@ -62,7 +65,6 @@ module.exports = function(ctx) {
                     return conn.rollback().then(()=>{throw err}).catch(error=>{throw error})
                 }).finally(() => {
                     conn.close().catch(err=>console.error(`oracle conn.close error ${err} `))
-                    console.log('update-finally-close()')
                 })
             }).catch(err => {
                 throw err
