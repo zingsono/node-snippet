@@ -24,13 +24,17 @@ let ctx = {
         delete require.cache[require.resolve(rt)] // 文件更新时需要清除缓存或者重启服务
         return require(rt)(ctx, req, res)
     },
+    route(rt, req, res){
+        rt = 'route' + rt
+        return ctx.require(rt, req, res)
+    },
     config() {
         return ctx.require('config')
     }
 }
 
-app.all('/space/:rt', function (req, res) {
-    ctx.require(req.params.rt, req, res)
+app.all('/:module/:action', function (req, res) {
+    ctx.require(req.params.module + '/' + req.params.action, req, res)
         .then(rs => {
             res.send(rs)
         }).catch(err => {

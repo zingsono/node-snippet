@@ -4,7 +4,7 @@
 
 const fs = require('fs')
 
-const _F = {
+const _U = {
     /**
      * 内容写入文件
      * @param content
@@ -17,5 +17,5 @@ const _F = {
 }
 
 module.exports = function () {
-    return _F
+    return _U
 }
