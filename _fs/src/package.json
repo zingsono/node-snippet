@@ -1,0 +1,23 @@
+{
+  "name": "space",
+  "version": "1.0.0",
+  "description": "_space",
+  "main": "app.js",
+  "scripts": {
+    "serve": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "Zengs",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "express": "^4.16.4",
+    "moment": "^2.23.0",
+    "mongodb": "^3.1.10",
+    "oracledb": "^3.0.1",
+    "redis": "^2.8.0"
+  }
+}
