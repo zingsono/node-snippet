@@ -1,15 +1,13 @@
-model.exports = {
-
-    version: "1.0.1",
-    serviceName:"micro",
+/**
+ * 全局配置
+ */
+module.exports = {
     devmode: true,
-    service: (biz)=>{
-        return require('require-all')({
-            dirname: __dirname + '/service',
-        })[biz.method](biz)
+    app: {
+        version: '1.0.1',
+        name:'micro'
     },
-    
-}
-
-
-
+    server:{
+        port: 39201
+    },
+} 

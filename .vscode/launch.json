@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
     {
         "type": "node",
         "request": "launch",
@@ -19,11 +20,8 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "_space app.js debug",
-            "program": "${workspaceFolder}/_space/app.js",
-            "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ]
+            "name": "__micro src app.js debug",
+            "program": "${workspaceFolder}/__micro/src/app.js"
         }
     ]
 }
