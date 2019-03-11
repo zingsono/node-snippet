@@ -16,7 +16,7 @@ app.use(morgan('short'))
 app.disable('x-powered-by')
 
 // 静态文件目录
-app.use(express.static('public'))
+app.use(express.static('./public'))
 
 // Body数据解析
 let bodyParser = require('body-parser')
