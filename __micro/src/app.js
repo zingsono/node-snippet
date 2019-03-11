@@ -2,8 +2,14 @@
  * Application Start
  */
 let config = require('./config')
-let encrypt = require('./libs/encrypt')
-let micro = require('./libs/micro')
+let datagram = require('./libs/datagram')
+
+// Redis
+require('./libs/rediscli')
+// MongoDB
+require('./libs/mongoose')
+// Log4js
+require('./libs/log4js')
 
 let express = require('express')
 let app = express()
@@ -30,7 +36,6 @@ app.get('/', function (req, res) {
 })
 
 app.get('/gateway.do', function (req, res) { 
-    console.log()
     res.end('<title></title><meta charset="UTF-8"></meta><body>不支持GET请求</body>')
 })
 
@@ -42,16 +47,15 @@ app.post('/gateway.do', function (req, res) {
         return
     }
     //let appid = req.query.appid
-    console.log(JSON.stringify(req.body))
-    let biz = req.body.biz
-    biz = encrypt.decode(biz, '')
-    let rs = micro.call(JSON.parse(biz))
-    rs = encrypt.encode(JSON.stringify(rs), '')
-    
     res.set('Content-Type', 'text/plain')
-    res.end(rs)
+    datagram(req.body.biz).then(function(ciphertext){
+        res.end(ciphertext)
+    }).catch((error)=>{
+        global.log.error(error)
+        res.end()
+    })
 })
 
 app.listen(config.server.port, function () {
-    console.log(`Start Server http://localhost:${config.server.port}/`)
+    global.log.debug(`Start Server http://localhost:${config.server.port}/`)
 })

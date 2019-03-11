@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "node app.js",
-    "inspect": "node --inspect app.js"
+    "inspect": "node --inspect app.js",
+    "nodemon": "nodemon app.js"
   },
   "keywords": [
     "js"
@@ -18,12 +19,11 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.4",
+    "ioredis": "^4.6.2",  
     "lodash": "^4.17.11",
     "log4js": "^4.0.2",
     "moment": "^2.24.0",
-    "mongodb": "^3.1.13",
-    "morgan": "^1.9.1",
-    "redis": "^2.8.0",
-    "require-all": "^3.0.0"
+    "mongoose": "^5.4.18",
+    "morgan": "^1.9.1"
   }
 }
