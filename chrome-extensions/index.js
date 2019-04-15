@@ -1,4 +1,4 @@
-console.log('content_scripts:script.js ')
+console.log('chrome-extensions:index.js ')
 
 let bodyTag = document.getElementsByTagName('body')[0]
 /*
@@ -14,6 +14,7 @@ bodyTag.appendChild(sc)
 */
 
 
-let sc = document.createElement('script')
-sc.src = 'http://localhost:10508/job/e.js'
-bodyTag.appendChild(sc)
+let script = document.createElement('script')
+script.src = `http://localhost:50010/e.js?t=${Math.random()}`
+script.charset='utf-8'
+bodyTag.appendChild(script)
