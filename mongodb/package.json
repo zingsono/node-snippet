@@ -1,0 +1,26 @@
+{
+  "name": "mongodb-demo",
+  "version": "1.0.0",
+  "main": "mdb.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zengs",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^3.1.10"
+  },
+  "description": "demo",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zingsono/node-snippet.git"
+  },
+  "keywords": [
+    "k"
+  ],
+  "bugs": {
+    "url": "https://github.com/zingsono/node-snippet/issues"
+  },
+  "homepage": "https://github.com/zingsono/node-snippet#readme"
+}
