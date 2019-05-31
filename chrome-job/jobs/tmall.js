@@ -1,8 +1,8 @@
+console.log('Init jobs/tmall.js')
 /**
  * 采集天猫旗舰店信息
  */
-(()=>{
-    window.log('Init jobs/tmall.js')
+$(function () {
 
     //控制每个页面工作内容
 
@@ -12,7 +12,7 @@
         $('input[name="q"]').focus()
         setTimeout(()=>{
             //输入框填入关键词
-            $('input[name="q"]').val('女装旗舰店')
+            $('input[name="q"]').val('鞋旗舰店')
             //3秒后点击按钮
             setTimeout(()=>{
                 window.log('> 点击搜索按钮')
@@ -21,7 +21,7 @@
         }, 2000)
     }
 
-    //2.所搜结果，门店列表页
+    //2.搜结果，门店列表页
     if(location.href.startsWith('https://list.tmall.com/search_product.htm')&&$('#J_ItemList')){
         setTimeout(()=>{
             window.log('> 天猫搜索结果页')
@@ -35,22 +35,8 @@
                     toStore : store
                 }
                 window.log(i+'>>='+JSON.stringify(shop))
-                window.http.post({db:'tbk', c:'tmall_shop', m:'insertOne', params:[shop]}, function (data) {
-                    if(data.code=='0'){
-                        window.log(`> 新增成功 user_number_id=${shop.user_number_id}`)
-                    } else
-                    //已经存在，则执行更新操作
-                    if(data.code=='11000'){
-                        window.http.post({db:'tbk', c:'tmall_shop', m:'updateOne', params:[{user_number_id:shop.user_number_id}, {$set:shop}]}, function (data) {
-                            if(data.code == '0'){
-                                window.log(`> 更新成功 user_number_id=${shop.user_number_id}`)
-                            }else {
-                                window.log(`> 更新出错 user_number_id=${shop.user_number_id}`)
-                            }
-                        })
-                    }else{
-                        window.log(`> 新增出错 user_number_id=${shop.user_number_id}`)
-                    }
+                window.http.post({db:'tbk', c:'tmall', m:'updateOne', params:[{user_number_id:shop.user_number_id},{$set:shop},{upsert:true}]}, function (data) {
+                    console.log(`user_number_id=${shop.user_number_id} data=`,data)
                 })
             })
 
@@ -64,4 +50,4 @@
 
         }, 10*1000)
     }
-})()
+})

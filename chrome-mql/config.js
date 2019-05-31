@@ -6,8 +6,13 @@ module.exports = {
     },
     mongo:{
         uris:{
-            tbk:'mongodb://localhost:27017/tbk?poolSize=4'
+            tbk: 'mongodb://dev:dev1qaz2wsx@mongodb.s.zingson.com:37017/dev'
         },
-        options:{useNewUrlParser:true}
+        'options' : {
+            'useNewUrlParser' : true,
+            'authSource' : 'admin',
+            'authMechanism': 'SCRAM-SHA-1',
+            'poolSize' : 4
+        }
     }
 }

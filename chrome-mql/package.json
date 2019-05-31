@@ -9,13 +9,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@koa/cors": "^2.2.3",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
-    "koa-cors": "0.0.16",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "log4js": "^4.1.0",
-    "node-mongo-mql": "^1.0.1",
+    "node-mongo-mql": "^1.0.3",
     "uuid": "^3.3.2"
   }
 }
