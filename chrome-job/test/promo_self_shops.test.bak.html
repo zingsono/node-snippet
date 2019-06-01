@@ -1,0 +1,56 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <script src="../assets/jquery/jquery.min.js"></script>
+
+</head>
+<body>
+<p>正则匹配数据</p>
+<div id="data"></div>
+<script>
+    $(function () {
+        let s = `<tr class="" mx-ie="mouseover,mouseout"> <td class="left" mx-ie="mouseover,mouseout"> <div class="list-group" mx-ie="mouseover,mouseout">    <a href="http://shop64185146.taobao.com/" class="img" target="_blank">  <img src="//img.alicdn.com/shop-logohttps://img.alicdn.com/imgextra/i1/479184430/TB2BFR7pgnH8KJjSspcXXb3QFXa_!!479184430.jpg" onerror="this.src='https://img.alicdn.com/tps/i1/T1syqxFbNdXXczfNfo-80-80.gif'"> </a> <ul class="attr"> <li class="title">    <a href="http://shop64185146.taobao.com/" title="MG小象欧美街拍时尚女装" target="_blank">  MG小象欧美街拍时尚女装 </a> </li> <li> <span class="color-grey">掌柜：毛菇小象</span> </li> <li> <a href="#!/promo/self/shop_detail?userNumberId=479184430" data-spm-click="gostr=/tblm.88.1;locaid=dddf0d254" mx-mouseover="shopinfo_show{userNumberId:479184430}" mx-mouseout="shopinfo_hide" class="color-blue" target="_blank" mx-owner="magix_vf_shops_list">店铺推广详情&gt;&gt;</a> </li> </ul> </div> </td>    <td class="left" width="100" mx-ie="mouseover,mouseout" data-spm-anchor-id="a219t.7664554.1998457203.i3.33cd35d9ROQ03z"><span class="color-green">10.97%</span></td> <td class="left" width="70" mx-ie="mouseover,mouseout">1047件</td> <td class="left" width="90">272130件</td> <td class="center" width="110"> <p class="operation"> <a class="btn btn-blue" href="#" mx-click="zone{userNumberId:479184430}" data-spm-click="gostr=/tblm.88.1;locaid=d634b54ab;pvid=51_115.174.175.58_637_1559398764624&amp;actionid=10" mx-owner="magix_vf_shops_list">立即推广</a> </p> </td>  </tr>`
+        let d = {
+            tuid: s.match()
+        }
+
+
+
+        let trs = $('#brix_brick_14944 tbody tr')
+        console.log(`tr count : ${trs.length}`)
+        trs.each((trIndex)=>{
+            let d = {  }
+            let tds = $(this).find('td')
+            console.log(`td count : ${tds.length}`)
+            tds.each((tdIndex)=>{
+                let _td = $(this)
+                //第一列：logo、掌柜名、店铺名、店铺URL、店铺用户ID
+                if(tdIndex==0){
+                    let tgo = $(_td.find('.list-group').find('li')[2]).children('a').attr('href')
+                    d.tuid = tgo.match(/userNumberId=\d+/)[0].match(/\d+/)[0]
+                    d.logo = _td.children('.list-group').children('.img').children('img').attr('src')
+                    d.shopName = _td.children('.list-group').children('ul').children('.title').children('a').attr('title')
+                    d.shopkeeper = $(_td.children('.list-group').children('ul').children()[1]).children('span').text()
+                    d.originalLine = _td.children('.list-group').children('.img').attr('href')
+                }
+                //第二列：平均佣金率
+                if(tdIndex==1){
+                    d.rate = _td.children('span').text()
+                }
+                //第三列：商品数量
+                if(tdIndex==2){
+                    d.gTotal = _td.text().substring(0,_td.text().length-1)
+                }
+                //第四列：30天推广量
+                if(tdIndex==2){
+                    d.promo = _td.text().substring(0,_td.text().length-1)
+                }
+            })
+            console.log(`trIndex=${trIndex} d = ${JSON.stringify(d)}`)
+
+        })
+    })
+</script>
+</body>
+</html>

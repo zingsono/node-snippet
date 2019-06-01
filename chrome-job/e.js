@@ -1,23 +1,7 @@
 console.log(`job:e.js`)
 
-let cView = ()=>{
-    return `
-        <style>
-        .consoleView{ margin: 15px auto; width:80%; background-color: #0a001f;color: #ffffff;z-index: 99999 }
-        </style>
-        <div class="consoleView" id="consoleView"></div>
-    `
-
-}
-
 window.log = (msg)=>{
     console.log(`log>${msg}`)
-    /*if(typeof $ != 'undefined'){
-        if(!$('#consoleView')){
-             $('body').append(cView())
-        }
-        $('#consoleView').append(`<p>${msg}</p>`)
-    }*/
 }
 
 window.http = {
@@ -62,8 +46,18 @@ window.log('********************************************************************
         addTask('pub.alimama.com/myunion.htm','alimama')
     }
 
-    //已经存在jquery的直接使用，不存在的添加
     addScript('https://cdn.bootcss.com/jquery/3.4.1/jquery.js', function () {
+        // 读取URL参数
+        $.query = (name)=>{
+            let r = window.location.search.substr(1).match(new RegExp("(^|&)" + name + "=([^&]*)(&|$)"));
+            return decodeURI(r[2])||null;
+        }
+        $.getCookie = (name)=>{
+            console.log('document.cookir=',document.cookie)
+            let r = document.cookie.match(new RegExp("(^|; )"+name+"=([^;]*)(;|$)"))
+            console.log('r=',r)
+            return decodeURI(r[2])||null;
+        }
         task()
     })
 })()
