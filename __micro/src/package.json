@@ -20,7 +20,7 @@
   "dependencies": {
     "express": "^4.16.4",
     "ioredis": "^4.6.2",  
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "log4js": "^4.0.2",
     "moment": "^2.24.0",
     "mongoose": "^5.4.18",
